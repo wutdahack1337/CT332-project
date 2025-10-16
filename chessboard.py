@@ -55,11 +55,8 @@ class ChessBoard:
         if piece is not None and piece.color == self.board.turn:
             self.selected_square = square
             self.legal_moves = [move for move in self.board.legal_moves if move.from_square == square]
-            for move in self.board.legal_moves:
-                print(move)
         elif self.selected_square is not None:
             move = chess.Move(self.selected_square, square)
-            print(move, self.legal_moves)
             if move in self.legal_moves:
                 self.board.push(move)
                 self.selected_square = None
