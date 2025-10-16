@@ -7,6 +7,6 @@ ai project
 pip install python-chess pygame
 ```
 
-- [ ] Move generation and board visualization
+- [x] Move generation and board visualization
 - [ ] Random move
 - [ ] Log the AI status
