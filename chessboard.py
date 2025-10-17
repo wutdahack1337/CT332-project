@@ -11,6 +11,7 @@ HIGHLIGHT = (0, 255, 255)
 class ChessBoard:
     def __init__(self):
         pygame.init()
+        self.font = pygame.font.Font(None, 96)
         self.screen = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
         self.board = chess.Board()
 
@@ -31,11 +32,16 @@ class ChessBoard:
 
         running = True
         while running:
+            if self.board.is_game_over():
+                self.draw_game_over()
+                
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.handle_click(event.pos)
+
+            pygame.display.flip()
 
         pygame.quit()
 
@@ -83,7 +89,9 @@ class ChessBoard:
             x, y = self.square_to_pos(move.to_square)
             pygame.draw.circle(self.screen, HIGHLIGHT, (x + CELL_SIZE//2, y + CELL_SIZE//2), 19)
 
-        pygame.display.flip()
+    def draw_game_over(self):
+        text = self.font.render("Game Over", True, (255, 0, 0))
+        self.screen.blit(text, (BOARD_SIZE//2 - text.get_width()//2, BOARD_SIZE//2 - text.get_height()//2))
 
     def draw_cell(self, row, col, color):
         x = col*CELL_SIZE
