@@ -32,7 +32,9 @@ class ChessBoard:
 
         running = True
         while running:
-            self.check_game_over()
+            if self.board.is_game_over():
+                self.draw_game_over()
+                
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -87,10 +89,9 @@ class ChessBoard:
             x, y = self.square_to_pos(move.to_square)
             pygame.draw.circle(self.screen, HIGHLIGHT, (x + CELL_SIZE//2, y + CELL_SIZE//2), 19)
 
-    def check_game_over(self):
-        if self.board.legal_moves.count() == 0:
-            text = self.font.render("Game Over", True, (255, 0, 0))
-            self.screen.blit(text, (BOARD_SIZE//2 - text.get_width()//2, BOARD_SIZE//2 - text.get_height()//2))
+    def draw_game_over(self):
+        text = self.font.render("Game Over", True, (255, 0, 0))
+        self.screen.blit(text, (BOARD_SIZE//2 - text.get_width()//2, BOARD_SIZE//2 - text.get_height()//2))
 
     def draw_cell(self, row, col, color):
         x = col*CELL_SIZE
