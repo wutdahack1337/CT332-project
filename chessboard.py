@@ -78,9 +78,11 @@ class ChessBoard:
                 self.selected_square = None
                 self.legal_moves = []
             elif self.board.piece_at(self.selected_square) == chess.Piece.from_symbol("P") and 56 <= square <= 63:
-                self.step(self.legal_moves[0])
-                self.selected_square = None
-                self.legal_moves = []
+                promotion_move = chess.Move(self.selected_square, square, promotion=chess.QUEEN)
+                if promotion_move in self.legal_moves:
+                    self.step(promotion_move)
+                    self.selected_square = None
+                    self.legal_moves = []
 
     def draw_board(self):
         for row in range(8):
