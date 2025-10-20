@@ -9,5 +9,5 @@ python main.py
 
 # TODO
 - [x] Move generation and board visualization
-- [ ] Random move
+- [x] Dummy agent: Random move
 - [ ] Log the AI status

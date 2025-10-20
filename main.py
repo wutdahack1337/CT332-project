@@ -1,4 +1,6 @@
 from chessboard import ChessBoard
 
-game = ChessBoard()
+AGENT = "dummy"
+
+game = ChessBoard(AGENT)
 game.play()
