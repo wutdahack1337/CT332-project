@@ -15,5 +15,6 @@ python main.py
     - [x] Add move sound
     - [x] Position evaluation
     - [x] Add optional depth (default depth is 2)
-- [ ] Alpha-beta pruning 
+- [ ] Alpha-beta pruning
+- [ ] Improved evaluation function
 - [ ] Log the AI status
