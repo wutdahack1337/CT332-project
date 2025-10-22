@@ -135,11 +135,11 @@ class ChessBoard:
         if not piece:
             return
         
-        imgage = self.piece_images[piece.symbol()]
+        image = self.piece_images[piece.symbol()]
         x, y = self.square_to_pos(square)
-        x += (CELL_SIZE - imgage.get_width())//2
-        y += (CELL_SIZE - imgage.get_height())//2
-        self.screen.blit(imgage, (x, y))
+        x += (CELL_SIZE - image.get_width())//2
+        y += (CELL_SIZE - image.get_height())//2
+        self.screen.blit(image, (x, y))
 
     def pos_to_square(self, pos):
         return chess.square(pos[0]//CELL_SIZE, 7-pos[1]//CELL_SIZE)

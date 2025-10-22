@@ -66,11 +66,11 @@ class MinimaxAgent():
         if self.board.is_game_over():
             if self.board.is_checkmate():
                 if self.board.turn == chess.WHITE:
-                    return 9999  # Black wins
+                    return 9999 # Black wins
                 else:
-                    return -9999   # White wins
+                    return -9999 # White wins
             else:
-                return 0  # Draw
+                return 0 # Draw
         
         eval = 0
         for square in chess.SQUARES:
