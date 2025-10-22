@@ -1,6 +1,9 @@
 from chessboard import ChessBoard
 
-AGENT = "dummy"
+DUMMY_AGENT = "dummy"
 
-game = ChessBoard(AGENT)
+MINIMAX_AGENT = "minimax"
+DEPTH = 2
+
+game = ChessBoard(MINIMAX_AGENT, DEPTH)
 game.play()

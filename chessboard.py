@@ -14,11 +14,10 @@ BLACK = (181, 136, 99)
 HIGHLIGHT = (0, 255, 255)
 
 class ChessBoard:
-    def __init__(self, agent="dummy"):
+    def __init__(self, agent="dummy", depth=None):
         pygame.init()
         pygame.mixer.init()
 
-        self.font = pygame.font.Font(None, 96)
         self.screen = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
         self.board = chess.Board()
 
@@ -30,10 +29,10 @@ class ChessBoard:
 
         if agent == "dummy":
             self.agent = agents.DummyAgent(self.board)
+        elif agent == "minimax":
+            self.agent = agents.MinimaxAgent(self.board, depth)
 
     def play(self):
-        clock = pygame.time.Clock()
-
         running = True
         while running:
             if not self.board.is_game_over() and self.turn() == "black":
@@ -45,7 +44,6 @@ class ChessBoard:
 
             self.draw_board()
             pygame.display.flip()
-            clock.tick(60) # Limit to 60 FPS
 
         pygame.quit()
 
@@ -110,9 +108,26 @@ class ChessBoard:
         for move in self.legal_moves:
             x, y = self.square_to_pos(move.to_square)
             pygame.draw.circle(self.screen, HIGHLIGHT, (x + CELL_SIZE//2, y + CELL_SIZE//2), 19)
+        
+        font = pygame.font.Font(None, 24)
+        # Draw a-h, 1-8
+        for i in range(8):
+            letter = chr(ord('a') + i)
+            text = font.render(letter, True, (0, 0, 0))
+            x = i*CELL_SIZE + (CELL_SIZE - text.get_width())//2
+            y = BOARD_SIZE - text.get_height()
+            self.screen.blit(text, (x, y))
+
+            number = str(8 - i)
+            text = font.render(number, True, (0, 0, 0))
+            x = 5
+            y = i*CELL_SIZE + (CELL_SIZE - text.get_height())//2
+            self.screen.blit(text, (x, y))
             
+
+        font = pygame.font.Font(None, 96)
         if self.board.is_game_over():
-            text = self.font.render("Game Over", True, (255, 0, 0))
+            text = font.render("Game Over", True, (255, 0, 0))
             self.screen.blit(text, (BOARD_SIZE//2 - text.get_width()//2, BOARD_SIZE//2 - text.get_height()//2))
 
     def draw_piece(self, square):
