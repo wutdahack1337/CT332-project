@@ -7,7 +7,8 @@ import chess
 import agents
 
 CELL_SIZE = 90
-BOARD_SIZE = CELL_SIZE * 8
+BOARD_SIZE = CELL_SIZE*8
+
 WHITE = (240, 217, 181)
 BLACK = (181, 136, 99)
 HIGHLIGHT = (0, 255, 255)
@@ -15,6 +16,8 @@ HIGHLIGHT = (0, 255, 255)
 class ChessBoard:
     def __init__(self, agent="dummy"):
         pygame.init()
+        pygame.mixer.init()
+
         self.font = pygame.font.Font(None, 96)
         self.screen = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
         self.board = chess.Board()
@@ -22,19 +25,15 @@ class ChessBoard:
         self.selected_square = None
         self.legal_moves = []
 
-        self.pieces = {}
-        piece_files = {
-            'P': 'wP.png', 'N': 'wN.png', 'B': 'wB.png', 'R': 'wR.png', 'Q': 'wQ.png', 'K': 'wK.png',
-            'p': 'bP.png', 'n': 'bN.png', 'b': 'bB.png', 'r': 'bR.png', 'q': 'bQ.png', 'k': 'bK.png'
-        }
-        for symbol, filename in piece_files.items():
-            path = os.path.join('img/pieces', filename)
-            self.pieces[symbol] = pygame.image.load(path)
+        self.piece_images = self.load_piece_images()
+        self.move_sound = self.load_sound()
 
         if agent == "dummy":
             self.agent = agents.DummyAgent(self.board)
 
     def play(self):
+        clock = pygame.time.Clock()
+
         running = True
         while running:
             if not self.board.is_game_over() and self.turn() == "black":
@@ -42,19 +41,25 @@ class ChessBoard:
                 action = self.agent.get_action()
                 self.step(action)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif self.turn() == "white" and event.type == pygame.MOUSEBUTTONDOWN:
-                    self.handle_click(event.pos)
+            running = self.handle_events()
 
             self.draw_board()
             pygame.display.flip()
+            clock.tick(60) # Limit to 60 FPS
 
         pygame.quit()
 
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            elif self.turn() == "white" and event.type == pygame.MOUSEBUTTONDOWN:
+                self.handle_click(event.pos)
+        return True
+
     def step(self, move):
         self.board.push(move)
+        self.move_sound.play()
 
     def handle_click(self, pos):
         square = self.pos_to_square(pos)
@@ -77,7 +82,8 @@ class ChessBoard:
                 self.step(move)
                 self.selected_square = None
                 self.legal_moves = []
-            elif self.board.piece_at(self.selected_square) == chess.Piece.from_symbol("P") and 56 <= square <= 63:
+            elif self.board.piece_at(self.selected_square).symbol().lower() == 'p' and chess.square_rank(square) in [0, 7]:
+                # Giả sử luôn phong Queen
                 promotion_move = chess.Move(self.selected_square, square, promotion=chess.QUEEN)
                 if promotion_move in self.legal_moves:
                     self.step(promotion_move)
@@ -114,11 +120,11 @@ class ChessBoard:
         if not piece:
             return
         
-        img = self.pieces[piece.symbol()]
+        imgage = self.piece_images[piece.symbol()]
         x, y = self.square_to_pos(square)
-        x += (CELL_SIZE - img.get_width())//2
-        y += (CELL_SIZE - img.get_height())//2
-        self.screen.blit(img, (x, y))
+        x += (CELL_SIZE - imgage.get_width())//2
+        y += (CELL_SIZE - imgage.get_height())//2
+        self.screen.blit(imgage, (x, y))
 
     def pos_to_square(self, pos):
         return chess.square(pos[0]//CELL_SIZE, 7-pos[1]//CELL_SIZE)
@@ -131,4 +137,18 @@ class ChessBoard:
             return "white"
         return "black"
 
+    def load_piece_images(self):
+        piece_images = {}
+        piece_files = {
+            'P': 'wP.png', 'N': 'wN.png', 'B': 'wB.png', 'R': 'wR.png', 'Q': 'wQ.png', 'K': 'wK.png',
+            'p': 'bP.png', 'n': 'bN.png', 'b': 'bB.png', 'r': 'bR.png', 'q': 'bQ.png', 'k': 'bK.png'
+        }
+        for symbol, filename in piece_files.items():
+            path = os.path.join('media/pieces', filename)
+            piece_images[symbol] = pygame.image.load(path)
+
+        return piece_images
     
+    def load_sound(self):
+        path = os.path.join('media/sound', "move.wav")
+        return pygame.mixer.Sound(path)

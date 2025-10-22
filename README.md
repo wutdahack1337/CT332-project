@@ -10,4 +10,7 @@ python main.py
 # TODO
 - [x] Move generation and board visualization
 - [x] Dummy agent: Random move
+- [ ] Minimax agent:
+    - [x] Add move sound
+    - [ ] Position evaluation
 - [ ] Log the AI status
