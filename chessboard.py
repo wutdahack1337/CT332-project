@@ -6,7 +6,7 @@ import chess
 
 import agents
 
-CELL_SIZE = 90
+CELL_SIZE = 96
 BOARD_SIZE = CELL_SIZE*8
 
 WHITE = (240, 217, 181)
@@ -31,12 +31,13 @@ class ChessBoard:
             self.agent = agents.DummyAgent(self.board)
         elif agent == "minimax":
             self.agent = agents.MinimaxAgent(self.board, depth)
+        elif agent == "pruning":
+            self.agent = agents.PruningAgent(self.board, depth)
 
     def play(self):
         running = True
         while running:
             if not self.board.is_game_over() and self.turn() == "black":
-                time.sleep(0.69)
                 action = self.agent.get_action()
                 self.step(action)
 

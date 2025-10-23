@@ -64,11 +64,90 @@ class MinimaxAgent():
 
     def evaluate_board(self):
         if self.board.is_game_over():
-            if self.board.is_checkmate():
-                if self.board.turn == chess.WHITE:
-                    return 9999 # Black wins
+            outcome = self.board.outcome()
+            if outcome.winner == chess.BLACK:
+                return 9999 # Black wins
+            elif outcome.winner == chess.WHITE:
+                return -9999 # White wins
+            else:
+                return 0 # Draw
+        
+        eval = 0
+        for square in chess.SQUARES:
+            piece = self.board.piece_at(square)
+            if piece:
+                value = self.piece_values[piece.symbol().lower()]
+                if piece.color == chess.BLACK:
+                    eval += value
                 else:
-                    return -9999 # White wins
+                    eval -= value
+        return eval
+    
+class PruningAgent():
+    """
+        Same with MinimaxAgent, but has alpha-beta pruning
+    """
+    def __init__(self, board, depth=2):
+        self.board = board
+        
+        self.piece_values = {
+            'p': 10, # pawn
+            'b': 30, # bishop
+            'n': 30, # knight
+            'r': 50, # rook
+            'q': 90, # queen
+            'k': 900, # king
+        }
+
+        self.depth = depth
+
+    def get_action(self):
+        return self.minimax(self.depth, "black", -math.inf, math.inf)[0]
+
+    def minimax(self, depth, player, alpha, beta):
+        """
+            return best_move, best_eval
+        """
+        if depth == 0:
+            return None, self.evaluate_board()
+
+        best_move = None
+        if player == "black": # want to maximum agent score
+            for move in self.board.legal_moves:
+                self.board.push(move)
+                _, eval = self.minimax(depth-1, "white", alpha, beta)
+                self.board.pop()
+                
+                if eval > alpha:
+                    best_move = move
+                    alpha = eval
+
+                if beta <= alpha: # alpha cutoff
+                    break
+
+            return best_move, alpha
+        else: # want to minimum agent score
+            for move in self.board.legal_moves:
+                self.board.push(move)
+                _, eval = self.minimax(depth-1, "black", alpha, beta)
+                self.board.pop()
+                
+                if eval < beta:
+                    best_move = move
+                    beta = eval
+
+                if beta <= alpha: # beta cutoff
+                    break
+
+            return best_move, beta
+
+    def evaluate_board(self):
+        if self.board.is_game_over():
+            outcome = self.board.outcome()
+            if outcome.winner == chess.BLACK:
+                return 9999 # Black wins
+            elif outcome.winner == chess.WHITE:
+                return -9999 # White wins
             else:
                 return 0 # Draw
         
