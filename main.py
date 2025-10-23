@@ -15,7 +15,7 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    if args.agent == "dummy":
+    if args.agent == DUMMY_AGENT:
         args.depth = None
 
     game = ChessBoard(args.agent, args.depth)

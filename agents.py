@@ -85,7 +85,7 @@ class MinimaxAgent():
     
 class PruningAgent():
     """
-        Same with MinimaxAgent, but have alpha-beta pruning
+        Same with MinimaxAgent, but has alpha-beta pruning
     """
     def __init__(self, board, depth=2):
         self.board = board
