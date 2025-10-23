@@ -4,7 +4,7 @@ Tham khảo: [simple-chess-ai](https://github.com/lhartikk/simple-chess-ai)
 # How to run
 ```
 pip install python-chess pygame
-python main.py
+python main.py --agent="minimax" --depth=2
 ```
 
 # TODO
@@ -15,6 +15,7 @@ python main.py
     - [x] Add move sound
     - [x] Position evaluation
     - [x] Add optional depth (default depth is 2)
-- [ ] Alpha-beta pruning
+- [ ] Alpha-beta pruning:
+    - [ ] Add cli
 - [ ] Improved evaluation function
 - [ ] Log the AI status

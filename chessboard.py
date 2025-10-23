@@ -6,7 +6,7 @@ import chess
 
 import agents
 
-CELL_SIZE = 90
+CELL_SIZE = 96
 BOARD_SIZE = CELL_SIZE*8
 
 WHITE = (240, 217, 181)
