@@ -251,3 +251,5 @@ def get_pos_value(piece, square):
             return queen_eval[row][col]
         elif symbol == 'k':
             return king_eval_black[row][col]
+        
+    return 0
