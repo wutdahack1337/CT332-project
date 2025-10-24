@@ -18,5 +18,5 @@ python main.py --agent="minimax" --depth=2
     - [x] Add optional depth (default depth is 2)
 - [x] Alpha-beta pruning:
     - [x] Add cli
-- [ ] Improved evaluation function
+- [x] Improved evaluation function
 - [ ] Log the AI status

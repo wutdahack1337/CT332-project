@@ -13,19 +13,88 @@ class DummyAgent():
     def get_action(self):
         return random.choice(list(self.board.legal_moves))
 
+piece_values = {
+    'p': 10, # pawn
+    'b': 30, # bishop
+    'n': 30, # knight
+    'r': 50, # rook
+    'q': 90, # queen
+    'k': 900, # king
+}
+
+pawn_eval_white = [
+    [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+    [5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0],
+    [1.0,  1.0,  2.0,  3.0,  3.0,  2.0,  1.0,  1.0],
+    [0.5,  0.5,  1.0,  2.5,  2.5,  1.0,  0.5,  0.5],
+    [0.0,  0.0,  0.0,  2.0,  2.0,  0.0,  0.0,  0.0],
+    [0.5, -0.5, -1.0,  0.0,  0.0, -1.0, -0.5,  0.5],
+    [0.5,  1.0, 1.0,  -2.0, -2.0,  1.0,  1.0,  0.5],
+    [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0]
+]
+pawn_eval_black = list(reversed(pawn_eval_white))
+
+knight_eval = [
+    [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
+    [-4.0, -2.0,  0.0,  0.0,  0.0,  0.0, -2.0, -4.0],
+    [-3.0,  0.0,  1.0,  1.5,  1.5,  1.0,  0.0, -3.0],
+    [-3.0,  0.5,  1.5,  2.0,  2.0,  1.5,  0.5, -3.0],
+    [-3.0,  0.0,  1.5,  2.0,  2.0,  1.5,  0.0, -3.0],
+    [-3.0,  0.5,  1.0,  1.5,  1.5,  1.0,  0.5, -3.0],
+    [-4.0, -2.0,  0.0,  0.5,  0.5,  0.0, -2.0, -4.0],
+    [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
+]
+
+bishop_eval_white = [
+    [ -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
+    [ -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0],
+    [ -1.0,  0.0,  0.5,  1.0,  1.0,  0.5,  0.0, -1.0],
+    [ -1.0,  0.5,  0.5,  1.0,  1.0,  0.5,  0.5, -1.0],
+    [ -1.0,  0.0,  1.0,  1.0,  1.0,  1.0,  0.0, -1.0],
+    [ -1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0],
+    [ -1.0,  0.5,  0.0,  0.0,  0.0,  0.0,  0.5, -1.0],
+    [ -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0]
+]
+bishop_eval_black = list(reversed(bishop_eval_white))
+
+rook_eval_white = [
+    [  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0],
+    [  0.5,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  0.5],
+    [ -0.5,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5],
+    [ -0.5,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5],
+    [ -0.5,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5],
+    [ -0.5,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5],
+    [ -0.5,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5],
+    [  0.0,  0.0,  0.0,  0.5,  0.5,  0.0,  0.0,  0.0]
+]
+rook_eval_black = list(reversed(rook_eval_white))
+
+queen_eval = [
+    [ -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
+    [ -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0],
+    [ -1.0,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -1.0],
+    [ -0.5,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -0.5],
+    [  0.0,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -0.5],
+    [ -1.0,  0.5,  0.5,  0.5,  0.5,  0.5,  0.0, -1.0],
+    [ -1.0,  0.0,  0.5,  0.0,  0.0,  0.0,  0.0, -1.0],
+    [ -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0]
+]
+
+king_eval_white = [
+    [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
+    [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
+    [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
+    [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
+    [ -2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0],
+    [ -1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0],
+    [  2.0,  2.0,  0.0,  0.0,  0.0,  0.0,  2.0,  2.0 ],
+    [  2.0,  3.0,  1.0,  0.0,  0.0,  1.0,  3.0,  2.0 ]
+]
+king_eval_black = list(reversed(king_eval_white))
+
 class MinimaxAgent():
     def __init__(self, board, depth=2):
         self.board = board
-        
-        self.piece_values = {
-            'p': 10, # pawn
-            'b': 30, # bishop
-            'n': 30, # knight
-            'r': 50, # rook
-            'q': 90, # queen
-            'k': 900, # king
-        }
-
         self.depth = depth
 
     def get_action(self):
@@ -76,11 +145,11 @@ class MinimaxAgent():
         for square in chess.SQUARES:
             piece = self.board.piece_at(square)
             if piece:
-                value = self.piece_values[piece.symbol().lower()]
+                value = piece_values[piece.symbol().lower()]
                 if piece.color == chess.BLACK:
-                    eval += value
+                    eval += value + get_pos_value(piece, square)
                 else:
-                    eval -= value
+                    eval -= value + get_pos_value(piece, square)
         return eval
     
 class PruningAgent():
@@ -89,16 +158,6 @@ class PruningAgent():
     """
     def __init__(self, board, depth=2):
         self.board = board
-        
-        self.piece_values = {
-            'p': 10, # pawn
-            'b': 30, # bishop
-            'n': 30, # knight
-            'r': 50, # rook
-            'q': 90, # queen
-            'k': 900, # king
-        }
-
         self.depth = depth
 
     def get_action(self):
@@ -155,9 +214,40 @@ class PruningAgent():
         for square in chess.SQUARES:
             piece = self.board.piece_at(square)
             if piece:
-                value = self.piece_values[piece.symbol().lower()]
+                value = piece_values[piece.symbol().lower()]
                 if piece.color == chess.BLACK:
-                    eval += value
+                    eval += value + get_pos_value(piece, square)
                 else:
-                    eval -= value
+                    eval -= value + get_pos_value(piece, square)
         return eval
+    
+def get_pos_value(piece, square):
+    symbol = piece.symbol().lower()
+    row = square // 8
+    col = square % 8
+    if piece.color == chess.WHITE:
+        if symbol == 'p':
+            return pawn_eval_white[row][col]
+        elif symbol == 'n':
+            return knight_eval[row][col]
+        elif symbol == 'b':
+            return bishop_eval_white[row][col]
+        elif symbol == 'r':
+            return rook_eval_white[row][col]
+        elif symbol == 'q':
+            return queen_eval[row][col]
+        elif symbol == 'k':
+            return king_eval_white[row][col]
+    else:
+        if symbol == 'p':
+            return pawn_eval_black[row][col]
+        elif symbol == 'n':
+            return knight_eval[row][col]
+        elif symbol == 'b':
+            return bishop_eval_black[row][col]
+        elif symbol == 'r':
+            return rook_eval_black[row][col]
+        elif symbol == 'q':
+            return queen_eval[row][col]
+        elif symbol == 'k':
+            return king_eval_black[row][col]
