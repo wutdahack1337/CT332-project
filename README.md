@@ -19,4 +19,3 @@ python main.py --agent="minimax" --depth=2
 - [x] Alpha-beta pruning:
     - [x] Add cli
 - [x] Improved evaluation function
-- [ ] Log the AI status
